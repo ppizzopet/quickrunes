@@ -7,7 +7,7 @@ Rune Maker for LeagueOfLegends
 Install requirements
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 And then run it with

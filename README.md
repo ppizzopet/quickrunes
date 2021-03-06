@@ -2,7 +2,7 @@
 
 Rune Maker for LeagueOfLegends
 
-## Installation
+## How to run
 
 Install requirements
 

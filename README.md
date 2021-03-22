@@ -23,5 +23,7 @@ python main.py
 3. Pick a champion.
 4. Run the script.
 
+## All runes are from https://u.gg/
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

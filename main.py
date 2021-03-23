@@ -2,7 +2,6 @@ from time import sleep
 from lcu_driver import Connector
 from requests import get
 import re
-import time
 from bs4 import BeautifulSoup
 import os
 
@@ -100,7 +99,7 @@ async def getRTillNot(connection):
     if con.status != 404 and jsonid != 0:
         champion = champions[jsonid]
     else:
-        time.sleep(4)
+        sleep(4)
         await getRTillNot(connection)
 
 fetchRunesList()

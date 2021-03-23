@@ -19,9 +19,7 @@ python main.py
 ## How to make runes
 
 1. Run LeagueOfLegends.
-2. Get into the champion select lobby.
-3. Pick a champion.
-4. Run the script.
+2. Run the script.
 
 ## All runes are from https://u.gg/
 

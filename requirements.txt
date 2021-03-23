@@ -1,3 +1,4 @@
 lcu_driver
 requests
 bs4
+psutil

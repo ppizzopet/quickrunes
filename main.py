@@ -2,11 +2,15 @@ from time import sleep
 from lcu_driver import Connector
 from requests import get
 import re
+import time
 from bs4 import BeautifulSoup
-from sys import exit
+import os
 
-print(" Quick Runes v1.2 ")
+ver = "v1.3"
+
+print(f" Quick Runes {ver} ")
 print("")
+print("Ready for making runes!")
 
 champion = ""
 
@@ -89,7 +93,15 @@ def fetchRunes(champion):
 
     del i
 
-
+async def getRTillNot(connection):
+    global champion
+    con = await connection.request('get', '/lol-champ-select/v1/current-champion')
+    jsonid = await con.json()
+    if con.status != 404 and jsonid != 0:
+        champion = champions[jsonid]
+    else:
+        time.sleep(4)
+        await getRTillNot(connection)
 
 fetchRunesList()
 
@@ -98,45 +110,41 @@ fetchChampionsList()
 connector = Connector()
 
 
+def clear():
+    if os.name == 'nt':
+        _ = os.system('cls')
+
+    else:
+        _ = os.system('clear')
+
 @connector.ready
 async def connect(connection):
-    global champion
 
-    try:
-        request1 = await connection.request('get', '/lol-champ-select/v1/current-champion')
-    except:
-        print("Can’t get lobby id, try again later.")
-        exit(0)
+    while True:
+        print(" ")
+        print("Getting champion...")
+        await getRTillNot(connection)
 
-    try:
-        champion = champions[await request1.json()]
-    except:
-        print("You haven't picked champion yet or you aren't in the lobby, try again later.")
-        exit(0)
+        print(f"Making runes for {champion}...")
+        fetchRunes(champion)
 
-    print(f"Making runes for {champion}...")
-    fetchRunes(champion)
+        print(" ")
+        print(runes[1] + " | " + runes[2] + " - " + runes[3] + ", " + runes[4] + ", " + runes[5])
+        print(runes[6] + " | " + runes[7] + ", " + runes[8])
+        print(runes[9] + " - " + runes[10] + " - " + runes[11])
+        print(" ")
 
-    print(" ")
-    print(runes[1] + " | " + runes[2] + " - " + runes[3] + ", " + runes[4] + ", " + runes[5])
-    print(runes[6] + " | " + runes[7] + ", " + runes[8])
-    print(runes[9] + " - " + runes[10] + " - " + runes[11])
-    print(" ")
+        print("Applying runes...")
+        request2 = await connection.request('get', '/lol-perks/v1/pages')
+        pages = await request2.json()
+        page0 = pages[0]
+        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": "QuickRunes", "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
+        print("Done !")
 
-    print("Applying runes...")
-    request2 = await connection.request('get', '/lol-perks/v1/pages')
-    pages = await request2.json()
-    page0 = pages[0]
-    await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": "QuickRunes",
-        "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]],
-        runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]],
-            runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
+        sleep(5)
+        clear()
+        print(f" Quick Runes {ver} ")
+        print("")
+        print("Ready for making another runes!")
 
-    print("Done !")
-
-    sleep(5)
-
-try:
-    connector.start()
-except:
-    print("Some error occurred, try again later.")
+connector.start()

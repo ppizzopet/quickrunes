@@ -137,7 +137,7 @@ async def connect(connection):
         request2 = await connection.request('get', '/lol-perks/v1/pages')
         pages = await request2.json()
         page0 = pages[0]
-        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": "QuickRunes", "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
+        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": f"QuickRunes {champion}" , "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
         print("Done !")
 
         sleep(5)

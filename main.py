@@ -2,11 +2,25 @@ from time import sleep
 from lcu_driver import Connector
 from requests import get
 import re
+import time
 from bs4 import BeautifulSoup
 import os
 
 ver = "v1.3"
 
+def checkVersion():
+    request = get(url="https://raw.githubusercontent.com/ppizzopet/quickrunes/main/version.txt")
+    data = request.json()
+    if "v"+str(data) == ver:
+        return
+    else:
+        print("New version is available!")
+        print("")
+try:
+    checkVersion()
+except:
+    print("Unable to check version.")
+    
 print(f" Quick Runes {ver} ")
 print("")
 print("Ready for making runes!")
@@ -99,7 +113,7 @@ async def getRTillNot(connection):
     if con.status != 404 and jsonid != 0:
         champion = champions[jsonid]
     else:
-        sleep(4)
+        time.sleep(4)
         await getRTillNot(connection)
 
 fetchRunesList()
@@ -137,7 +151,7 @@ async def connect(connection):
         request2 = await connection.request('get', '/lol-perks/v1/pages')
         pages = await request2.json()
         page0 = pages[0]
-        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": f"QuickRunes {champion}" , "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
+        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": f"QuickRunes {champion}", "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
         print("Done !")
 
         sleep(5)

@@ -6,7 +6,7 @@ import time
 from bs4 import BeautifulSoup
 import os
 
-ver = "v1.3"
+ver = "v1.32"
 
 def checkVersion():
     request = get(url="https://raw.githubusercontent.com/ppizzopet/quickrunes/main/version.txt")

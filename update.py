@@ -27,7 +27,7 @@ try:
     download_url(updatefilesurl, f"{quickrunesfilespath}update.zip")
     print("Unpacking file...")
     with ZipFile(f"{quickrunesfilespath}update.zip", 'r') as zipObj:
-        zipObj.extractall()
+        zipObj.extractall(path=quickrunesfilespath)
     print("Removing files...")
     os.remove(f"{quickrunesfilespath}update.zip")
     print("Done!")

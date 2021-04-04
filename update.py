@@ -2,7 +2,7 @@ try:
     from requests import get
     import os
     import time
-    import patoolib
+    from zipfile import ZipFile
 
     def download_url(url, save_path, chunk_size=128):
         r = get(url, stream=True)
@@ -18,17 +18,18 @@ try:
 
 
     newestVer = checkVersion()
-    updatefilesurl = f"http://www.github.com/ppizzopet/quickrunes/releases/download/{newestVer}/update.rar"
+    updatefilesurl = f"http://www.github.com/ppizzopet/quickrunes/releases/download/{newestVer}/update.zip"
 
-    print("QuickRunes Updater v1")
+    print("QuickRunes Updater v1.1")
     print("")
     quickrunesfilespath = input("Enter QuickRunes files path (C:/path/to/files/): ")
     print("Downloading update...")
-    download_url(updatefilesurl, f"{quickrunesfilespath}update.rar")
+    download_url(updatefilesurl, f"{quickrunesfilespath}update.zip")
     print("Unpacking file...")
-    patoolib.extract_archive(f"{quickrunesfilespath}update.rar", outdir=f"{quickrunesfilespath}")
+    with ZipFile(f"{quickrunesfilespath}update.zip", 'r') as zipObj:
+        zipObj.extractall()
     print("Removing files...")
-    os.remove(f"{quickrunesfilespath}update.rar")
+    os.remove(f"{quickrunesfilespath}update.zip")
     print("Done!")
     time.sleep(5)
 except Exception as e:

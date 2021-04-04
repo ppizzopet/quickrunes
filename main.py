@@ -53,7 +53,7 @@ runes = {1: None,
 
 def fetchChampionsList():
     global champions
-    request = get(url="http://ddragon.leagueoflegends.com/cdn/10.25.1/data/en_US/champion.json")
+    request = get(url="http://ddragon.leagueoflegends.com/cdn/11.7.1/data/en_US/champion.json")
     data = request.json()
     for championname in data["data"]:
         champions.update({int(data["data"][championname]["key"]): str(championname)})

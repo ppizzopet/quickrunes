@@ -21,6 +21,10 @@ python main.py
 1. Run LeagueOfLegends.
 2. Run the script.
 
+## ToDo
+- [ ] Another rune provider
+- [ ] GUI
+
 ## All runes are from https://u.gg/
 
 ## License

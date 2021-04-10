@@ -16,11 +16,7 @@ def checkVersion():
     else:
         print("New version is available!")
         print("")
-try:
-    checkVersion()
-except:
-    print("Unable to check version.")
-    
+        
 print(f" Quick Runes {ver} ")
 print("")
 print("Ready for making runes!")
@@ -156,6 +152,10 @@ async def connect(connection):
 
         sleep(5)
         clear()
+        try:
+            checkVersion()
+        except:
+            print("Unable to check version.")
         print(f" Quick Runes {ver} ")
         print("")
         print("Ready for making another runes!")

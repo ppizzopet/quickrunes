@@ -7,16 +7,31 @@ from bs4 import BeautifulSoup
 import os
 
 ver = "v1.322"
+newestPath = "11.8.1"
+
 
 def checkVersion():
     request = get(url="https://raw.githubusercontent.com/ppizzopet/quickrunes/main/version.txt")
     data = request.json()
-    if "v"+str(data) == ver:
+    if "v" + str(data) == ver:
         return
     else:
         print("New version is available!")
         print("")
-        
+
+
+def getLatestPath():
+    global newestPath
+    request = get(url="https://ddragon.leagueoflegends.com/api/versions.json")
+    data = request.json()
+    newestPath = data[0]
+
+
+try:
+    getLatestPath()
+except:
+    print("Can't get latest path! Using " + newestPath + ".")
+
 print(f" Quick Runes {ver} ")
 print("")
 print("Ready for making runes!")
@@ -46,17 +61,17 @@ runes = {1: None,
          }
 
 
-
 def fetchChampionsList():
     global champions
-    request = get(url="http://ddragon.leagueoflegends.com/cdn/11.8.1/data/en_US/champion.json")
+    request = get(url=f"http://ddragon.leagueoflegends.com/cdn/{newestPath}/data/en_US/champion.json")
     data = request.json()
     for championname in data["data"]:
         champions.update({int(data["data"][championname]["key"]): str(championname)})
 
+
 def fetchRunesList():
     global runeslist
-    request = get(url="http://ddragon.leagueoflegends.com/cdn/10.25.1/data/en_US/runesReforged.json")
+    request = get(url=f"http://ddragon.leagueoflegends.com/cdn/{newestPath}/data/en_US/runesReforged.json")
     data = request.json()
     for rune in data:
         runeslist.update({rune["name"]: rune["id"]})
@@ -79,7 +94,7 @@ def fetchRunes(champion):
         soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="rune-tree_header").find(
             class_="perk-style-title")))
     runes[2] = soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="perk-row keystone-row").find(
-            class_="perks").find(class_="perk keystone perk-active").find("img")["alt"].replace("The Keystone ", "")
+        class_="perks").find(class_="perk keystone perk-active").find("img")["alt"].replace("The Keystone ", "")
 
     i = 3
     for perk in soup.find("body").find(class_="rune-tree_v2 primary-tree").find_all(class_="perk perk-active"):
@@ -87,20 +102,24 @@ def fetchRunes(champion):
         i += 1
 
     runes[6] = cleantags(str(
-        soup.find("body").find(class_="secondary-tree").find(class_="rune-tree_v2").find(class_="rune-tree_header").find(
+        soup.find("body").find(class_="secondary-tree").find(class_="rune-tree_v2").find(
+            class_="rune-tree_header").find(
             class_="perk-style-title")))
 
     i = 7
-    for perk in soup.find("body").find(class_="secondary-tree").find(class_="rune-tree_v2").find_all(class_="perk perk-active"):
+    for perk in soup.find("body").find(class_="secondary-tree").find(class_="rune-tree_v2").find_all(
+            class_="perk perk-active"):
         runes[i] = perk.find("img")["alt"].replace("The Rune ", "")
         i += 1
 
     i = 9
-    for perk in soup.find("body").find(class_="rune-tree_v2 stat-shards-container_v2").find_all(class_="shard shard-active"):
+    for perk in soup.find("body").find(class_="rune-tree_v2 stat-shards-container_v2").find_all(
+            class_="shard shard-active"):
         runes[i] = perk.find("img")["alt"].replace("The ", "").replace(" Shard", "")
         i += 1
 
     del i
+
 
 async def getRTillNot(connection):
     global champion
@@ -111,6 +130,7 @@ async def getRTillNot(connection):
     else:
         time.sleep(4)
         await getRTillNot(connection)
+
 
 fetchRunesList()
 
@@ -126,9 +146,9 @@ def clear():
     else:
         _ = os.system('clear')
 
+
 @connector.ready
 async def connect(connection):
-
     while True:
         print(" ")
         print("Getting champion...")
@@ -147,7 +167,14 @@ async def connect(connection):
         request2 = await connection.request('get', '/lol-perks/v1/pages')
         pages = await request2.json()
         page0 = pages[0]
-        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]), data={"name": f"QuickRunes {champion}", "current": True, "primaryStyleId": runeslist[runes[1]], "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]], runeslist[runes[4]], runeslist[runes[5]], runeslist[runes[7]], runeslist[runes[8]], runeslist[runes[9]], runeslist[runes[10]], runeslist[runes[11]]], "subStyleId": runeslist[runes[6]] })
+        await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]),
+                                 data={"name": f"QuickRunes {champion}", "current": True,
+                                       "primaryStyleId": runeslist[runes[1]],
+                                       "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]],
+                                                           runeslist[runes[4]], runeslist[runes[5]],
+                                                           runeslist[runes[7]], runeslist[runes[8]],
+                                                           runeslist[runes[9]], runeslist[runes[10]],
+                                                           runeslist[runes[11]]], "subStyleId": runeslist[runes[6]]})
         print("Done !")
 
         sleep(5)
@@ -159,5 +186,6 @@ async def connect(connection):
         print(f" Quick Runes {ver} ")
         print("")
         print("Ready for making another runes!")
+
 
 connector.start()

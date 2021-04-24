@@ -1,3 +1,4 @@
 {
-  "runeprovider": "u.gg"
+  "runeprovider": "u.gg",
+  "autoclose": false
 }

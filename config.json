@@ -1,4 +1,5 @@
 {
-  "runeprovider": "u.gg",
-  "autoclose": false
+  "provider": "u.gg",
+  "autoclose": false,
+  "checkfornewver": true
 }

@@ -5,10 +5,20 @@ import re
 import time
 from bs4 import BeautifulSoup
 import os
+import json
 
 ver = "v1.322"
 newestPath = "11.8.1"
+config = {
+  "provider": "u.gg",
+  "autoclose": False,
+  "checkfornewver": True
+}
 
+def getConfig():
+    global config
+    with open("config.json", "r") as op0:
+        config = json.load(op0)
 
 def checkVersion():
     request = get(url="https://raw.githubusercontent.com/ppizzopet/quickrunes/main/version.txt")
@@ -26,6 +36,10 @@ def getLatestPath():
     data = request.json()
     newestPath = data[0]
 
+try:
+    getConfig()
+except:
+    print("Can't get config! Using default.")
 
 try:
     getLatestPath()
@@ -176,13 +190,17 @@ async def connect(connection):
                                                            runeslist[runes[9]], runeslist[runes[10]],
                                                            runeslist[runes[11]]], "subStyleId": runeslist[runes[6]]})
         print("Done !")
+        print(" ")
+        if config["checkfornewver"]:
+            try:
+                checkVersion()
+            except:
+                print("Unable to check version.")
 
         sleep(5)
+        if config["autoclose"]:
+            break
         clear()
-        try:
-            checkVersion()
-        except:
-            print("Unable to check version.")
         print(f" Quick Runes {ver} ")
         print("")
         print("Ready for making another runes!")

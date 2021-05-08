@@ -22,7 +22,7 @@ python main.py
 2. Run the script.
 
 ## ToDo
-- [ ] Another rune provider
+- [x] Another rune provider
 - [ ] GUI
 
 ## All runes are from https://u.gg/

@@ -181,8 +181,6 @@ fetchRunesList()
 
 fetchChampionsList()
 
-fetchRunes("fizz")
-
 connector = Connector()
 
 

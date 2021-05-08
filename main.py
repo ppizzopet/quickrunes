@@ -94,9 +94,15 @@ def fetchRunesList():
                 runeslist.update({perk["name"]: perk["id"]})
 
 
-def cleantags(text):
+def cleanTags(text):
     TAG_RE = re.compile(r'<[^>]+>')
     return str(TAG_RE.sub('', text))
+
+
+def getKey(val):
+    for key, value in runeslist.items():
+        if val == value:
+            return key
 
 
 def fetchRunes(champion):
@@ -105,7 +111,7 @@ def fetchRunes(champion):
         request = get(url=f"https://u.gg/lol/champions/{champion}/runes")
         soup = BeautifulSoup(request.content, 'html.parser')
 
-        runes[1] = cleantags(str(
+        runes[1] = cleanTags(str(
             soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="rune-tree_header").find(
                 class_="perk-style-title")))
         runes[2] = soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="perk-row keystone-row").find(
@@ -116,7 +122,7 @@ def fetchRunes(champion):
             runes[i] = perk.find("img")["alt"].replace("The Rune ", "")
             i += 1
 
-        runes[6] = cleantags(str(
+        runes[6] = cleanTags(str(
             soup.find("body").find(class_="secondary-tree").find(class_="rune-tree_v2").find(
                 class_="rune-tree_header").find(
                 class_="perk-style-title")))
@@ -138,18 +144,18 @@ def fetchRunes(champion):
         soup = BeautifulSoup(request.content, 'html.parser')
 
         keystones = soup.find_all(class_="perk-page__item perk-page__item--mark")
-        runes[1] = int(str(keystones[0])[int(str(keystones[0]).find(".png?"))-4:int(str(keystones[0]).find(".png?"))])
-        runes[6] = int(str(keystones[1])[int(str(keystones[1]).find(".png?"))-4:int(str(keystones[1]).find(".png?"))])
+        runes[1] = getKey(int(str(keystones[0])[int(str(keystones[0]).find(".png?"))-4:int(str(keystones[0]).find(".png?"))]))
+        runes[6] = getKey(int(str(keystones[1])[int(str(keystones[1]).find(".png?"))-4:int(str(keystones[1]).find(".png?"))]))
 
         keystonePerk = soup.find(class_="perk-page__item perk-page__item--keystone perk-page__item--active").find("img")["src"]
-        runes[2] = int(str(keystonePerk)[int(str(keystonePerk).find(".png?"))-4:int(str(keystonePerk).find(".png?"))])
+        runes[2] = getKey(int(str(keystonePerk)[int(str(keystonePerk).find(".png?"))-4:int(str(keystonePerk).find(".png?"))]))
 
         i = 3
         perkPage = soup.find_all(class_="perk-page__row")
         for j in range(1,9):
             if perkPage[j].find(class_="perk-page__item perk-page__item--active") is not None:
                 perk = perkPage[j].find(class_="perk-page__item perk-page__item--active").find("img")["src"]
-                runes[i] = int(str(perk)[int(str(perk).find(".png?")) - 4:int(str(perk).find(".png?"))])
+                runes[i] = getKey(int(str(perk)[int(str(perk).find(".png?")) - 4:int(str(perk).find(".png?"))]))
                 i+=1
                 if i == 6:
                     i = 7
@@ -159,7 +165,7 @@ def fetchRunes(champion):
         for f in fragments:
             sizeOfId = f["src"].find(".png")
             id = str(f["src"])[sizeOfId-4:sizeOfId]
-            runes[i] = int(id)
+            runes[i] = getKey(int(id))
             i+=1
 
     del i

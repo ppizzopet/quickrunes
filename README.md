@@ -25,7 +25,5 @@ python main.py
 - [x] Another rune provider
 - [ ] GUI
 
-## All runes are from https://u.gg/
-
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

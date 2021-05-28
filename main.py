@@ -1,5 +1,4 @@
 from time import sleep
-
 import requests
 from lcu_driver import Connector
 from requests import get
@@ -13,9 +12,9 @@ try:
     ver = "v1.4"
     newestPath = "11.8.1"
     config = {
-      "provider": "u.gg",
-      "autoclose": False,
-      "checkfornewver": True
+        "provider": "u.gg",
+        "autoclose": False,
+        "checkfornewver": True
     }
 
     headers = requests.utils.default_headers()
@@ -23,10 +22,12 @@ try:
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0',
     })
 
+
     def getConfig():
         global config
         with open("config.json", "r") as op0:
             config = json.load(op0)
+
 
     def checkVersion():
         request = get(url="https://raw.githubusercontent.com/ppizzopet/quickrunes/main/version.txt")
@@ -44,30 +45,24 @@ try:
         data = request.json()
         newestPath = data[0]
 
+
     try:
         getConfig()
     except:
         print("Can't get config! Using default.")
+        print("")
 
     try:
         getLatestPath()
     except:
         print("Can't get latest path! Using " + newestPath + ".")
+        print("")
 
     print(f" Quick Runes {ver} ")
     print("")
     print("Ready for making runes!")
 
     champion = ""
-
-    champions = {}
-
-    runeslist = {"Attack Speed": 5005,
-                 "Adaptive Force": 5008,
-                 "Scaling CDR": 5007,
-                 "Armor": 5002,
-                 "Magic Resist": 5003,
-                 "Scaling Bonus Health": 5001}
 
     runes = {1: None,
              2: None,
@@ -82,47 +77,57 @@ try:
              11: None
              }
 
+    championList = {}
 
-    def fetchChampionsList():
-        global champions
+    runesList = {"Attack Speed": 5005,
+                 "Adaptive Force": 5008,
+                 "Scaling CDR": 5007,
+                 "Armor": 5002,
+                 "Magic Resist": 5003,
+                 "Scaling Bonus Health": 5001}
+
+
+    def fetchChampionList():
+        global championList
         request = get(url=f"http://ddragon.leagueoflegends.com/cdn/{newestPath}/data/en_US/champion.json")
         data = request.json()
-        for championname in data["data"]:
-            champions.update({int(data["data"][championname]["key"]): str(championname)})
+        for championName in data["data"]:
+            championList.update({int(data["data"][championName]["key"]): str(championName)})
 
 
     def fetchRunesList():
-        global runeslist
+        global runesList
         request = get(url=f"http://ddragon.leagueoflegends.com/cdn/{newestPath}/data/en_US/runesReforged.json")
         data = request.json()
         for rune in data:
-            runeslist.update({rune["name"]: rune["id"]})
-            for perk in rune["slots"]:
-                for perk in perk["runes"]:
-                    runeslist.update({perk["name"]: perk["id"]})
+            runesList.update({rune["name"]: rune["id"]})
+            for slot in rune["slots"]:
+                for perk in slot["runes"]:
+                    runesList.update({perk["name"]: perk["id"]})
 
 
     def cleanTags(text):
-        TAG_RE = re.compile(r'<[^>]+>')
-        return str(TAG_RE.sub('', text))
+        tagRE = re.compile(r'<[^>]+>')
+        return str(tagRE.sub('', text))
 
 
     def getKey(val):
-        for key, value in runeslist.items():
+        for key, value in runesList.items():
             if val == value:
                 return key
 
 
-    def fetchRunes(champion):
+    def fetchRunes():
         global runes
         if config["provider"] == "u.gg":
-            request = get(url=f"https://u.gg/lol/champions/{champion}/runes")
+            request = get(url=f"https://u.gg/lol/championList/{champion}/runes")
             soup = BeautifulSoup(request.content, 'html.parser')
 
             runes[1] = cleanTags(str(
                 soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="rune-tree_header").find(
                     class_="perk-style-title")))
-            runes[2] = soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="perk-row keystone-row").find(
+            runes[2] = \
+            soup.find("body").find(class_="rune-tree_v2 primary-tree").find(class_="perk-row keystone-row").find(
                 class_="perks").find(class_="perk keystone perk-active").find("img")["alt"].replace("The Keystone ", "")
 
             i = 3
@@ -151,31 +156,33 @@ try:
             request = get(url=f"https://na.op.gg/champion/{champion}", headers=headers)
             soup = BeautifulSoup(request.content, 'html.parser')
             keystones = soup.find_all(class_="perk-page__item perk-page__item--mark")
-            runes[1] = getKey(int(str(keystones[0])[int(str(keystones[0]).find(".png?"))-4:int(str(keystones[0]).find(".png?"))]))
-            runes[6] = getKey(int(str(keystones[1])[int(str(keystones[1]).find(".png?"))-4:int(str(keystones[1]).find(".png?"))]))
+            runes[1] = getKey(
+                int(str(keystones[0])[int(str(keystones[0]).find(".png?")) - 4:int(str(keystones[0]).find(".png?"))]))
+            runes[6] = getKey(
+                int(str(keystones[1])[int(str(keystones[1]).find(".png?")) - 4:int(str(keystones[1]).find(".png?"))]))
 
-            keystonePerk = soup.find(class_="perk-page__item perk-page__item--keystone perk-page__item--active").find("img")["src"]
-            runes[2] = getKey(int(str(keystonePerk)[int(str(keystonePerk).find(".png?"))-4:int(str(keystonePerk).find(".png?"))]))
+            keystonePerk = \
+            soup.find(class_="perk-page__item perk-page__item--keystone perk-page__item--active").find("img")["src"]
+            runes[2] = getKey(
+                int(str(keystonePerk)[int(str(keystonePerk).find(".png?")) - 4:int(str(keystonePerk).find(".png?"))]))
             i = 3
             perkPage = soup.find_all(class_="perk-page__row")
-            for j in range(1,9):
+            for j in range(1, 9):
                 if perkPage[j].find(class_="perk-page__item perk-page__item--active") is not None:
                     perk = perkPage[j].find(class_="perk-page__item perk-page__item--active").find("img")["src"]
                     runes[i] = getKey(int(str(perk)[int(str(perk).find(".png?")) - 4:int(str(perk).find(".png?"))]))
-                    i+=1
+                    i += 1
                     if i == 6:
                         i = 7
             fragments = soup.find(class_="fragment-page").findAll(class_="active tip")
             i = 9
             for f in fragments:
                 sizeOfId = f["src"].find(".png")
-                id = str(f["src"])[sizeOfId-4:sizeOfId]
+                id = str(f["src"])[sizeOfId - 4:sizeOfId]
                 runes[i] = getKey(int(id))
-                i+=1
+                i += 1
 
         del i
-
-
 
 
     async def getRTillNot(connection):
@@ -183,7 +190,7 @@ try:
         con = await connection.request('get', '/lol-champ-select/v1/current-champion')
         jsonid = await con.json()
         if con.status != 404 and jsonid != 0:
-            champion = champions[jsonid]
+            champion = championList[jsonid]
         else:
             time.sleep(4)
             await getRTillNot(connection)
@@ -191,7 +198,7 @@ try:
 
     fetchRunesList()
 
-    fetchChampionsList()
+    fetchChampionList()
 
     connector = Connector()
 
@@ -212,7 +219,7 @@ try:
             await getRTillNot(connection)
 
             print(f"Making runes for {champion}... ({config['provider']})")
-            fetchRunes(champion)
+            fetchRunes()
 
             print(" ")
             print(runes[1] + " | " + runes[2] + " - " + runes[3] + ", " + runes[4] + ", " + runes[5])
@@ -226,12 +233,13 @@ try:
             page0 = pages[0]
             await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]),
                                      data={"name": f"QuickRunes {champion}", "current": True,
-                                           "primaryStyleId": runeslist[runes[1]],
-                                           "selectedPerkIds": [runeslist[runes[2]], runeslist[runes[3]],
-                                                               runeslist[runes[4]], runeslist[runes[5]],
-                                                               runeslist[runes[7]], runeslist[runes[8]],
-                                                               runeslist[runes[9]], runeslist[runes[10]],
-                                                               runeslist[runes[11]]], "subStyleId": runeslist[runes[6]]})
+                                           "primaryStyleId": runesList[runes[1]],
+                                           "selectedPerkIds": [runesList[runes[2]], runesList[runes[3]],
+                                                               runesList[runes[4]], runesList[runes[5]],
+                                                               runesList[runes[7]], runesList[runes[8]],
+                                                               runesList[runes[9]], runesList[runes[10]],
+                                                               runesList[runes[11]]],
+                                           "subStyleId": runesList[runes[6]]})
             print("Done !")
             print(" ")
             if config["checkfornewver"]:

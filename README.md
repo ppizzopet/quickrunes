@@ -2,6 +2,8 @@
 
 Rune Maker for LeagueOfLegends
 
+![Preview](https://github.com/ppizzopet/quickrunes/blob/main/images/preview.png?raw=true)
+
 ## How to run
 
 Install requirements

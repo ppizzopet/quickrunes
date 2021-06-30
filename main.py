@@ -1,4 +1,3 @@
-from time import sleep
 from lcu_driver import Connector
 from requests import get
 import re, json, os, time, requests
@@ -181,7 +180,7 @@ try:
         del i
 
 
-    async def getRTillNot(connection):
+    async def tryGetChamp(connection):
         global champion
         con = await connection.request('get', '/lol-champ-select/v1/current-champion')
         jsonid = await con.json()
@@ -189,7 +188,7 @@ try:
             champion = championList[jsonid]
         else:
             time.sleep(4)
-            await getRTillNot(connection)
+            await tryGetChamp(connection)
 
 
     fetchRunesList()
@@ -212,7 +211,7 @@ try:
         while True:
             print(" ")
             print("Getting champion...")
-            await getRTillNot(connection)
+            await tryGetChamp(connection)
 
             print(f"Making runes for {champion}... ({config['provider']})")
             fetchRunes()
@@ -244,7 +243,7 @@ try:
                 except:
                     print("Unable to check version.")
 
-            sleep(5)
+            time.sleep(5)
             if config["autoclose"]:
                 break
             clear()

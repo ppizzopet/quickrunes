@@ -120,7 +120,7 @@ try:
     def fetchRunes():
         global runes
         if config["provider"] == "u.gg":
-            request = get(url=f"https://u.gg/lol/championList/{champion}/runes")
+            request = get(url=f"https://u.gg/lol/champions/{champion}/runes")
             soup = BeautifulSoup(request.content, 'html.parser')
 
             runes[1] = cleanTags(str(

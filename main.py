@@ -1,16 +1,12 @@
 from time import sleep
-import requests
 from lcu_driver import Connector
 from requests import get
-import re
-import time
+import re, json, os, time, requests
 from bs4 import BeautifulSoup
-import os
-import json
 
 try:
     ver = "v1.4"
-    newestPath = "11.8.1"
+    newestPath = "11.13.1"
     config = {
         "provider": "u.gg",
         "autoclose": False,

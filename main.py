@@ -1,25 +1,23 @@
-import json
-import os
-import re
-import sys
-
-import requests
-import time
+from json import load as jsonload
+from os import system as ossystem, name as osname
+from re import compile as recompile
+from sys import exit
+from time import sleep
 
 from bs4 import BeautifulSoup
 from lcu_driver import Connector
-from requests import get
+from requests import get, utils
 
 try:
     ver = "v1.4"
-    newestPath = "11.13.1"
+    newestPath = "11.16.1"
     config = {
         "provider": "u.gg",
         "autoclose": False,
         "checkfornewver": True
     }
 
-    headers = requests.utils.default_headers()
+    headers = utils.default_headers()
     headers.update({
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0',
     })
@@ -33,7 +31,7 @@ try:
 
 
     def cleanTags(text):
-        tagRE = re.compile(r'<[^>]+>')
+        tagRE = recompile(r'<[^>]+>')
         return str(tagRE.sub('', text))
 
 
@@ -44,17 +42,17 @@ try:
 
 
     def clear():
-        if os.name == 'nt':
-            _ = os.system('cls')
+        if osname == 'nt':
+            _ = ossystem('cls')
 
         else:
-            _ = os.system('clear')
+            _ = ossystem('clear')
 
     def getConfig():
         global config
         try:
             with open("config.json", "r") as op0:
-                config = json.load(op0)
+                config = jsonload(op0)
         except FileNotFoundError:
             print("Can't get config! Using default.")
             print("")
@@ -125,8 +123,8 @@ try:
         except:
             print("Can't get champions!")
             print("")
-            time.sleep(6)
-            sys.exit()
+            sleep(6)
+            exit()
 
     def fetchRunesList():
         global runesList
@@ -140,8 +138,8 @@ try:
         except:
             print("Can't get runes!")
             print("")
-            time.sleep(6)
-            sys.exit()
+            sleep(6)
+            exit()
 
 
     def fetchRunes():
@@ -212,20 +210,20 @@ try:
         except:
             print("Can't get runes for your champion!")
             print("")
-            time.sleep(6)
-            sys.exit()
+            sleep(6)
+            exit()
 
 
     async def tryGetChamp(connection):
         global champion
-        con = await connection.request('get', '/lol-champ-select/v1/current-champion')
-        jsonId = await con.json()
-        if con.status != 404 and jsonId != 0:
-            champion = championList[jsonId]
-        else:
-            time.sleep(4)
-            await tryGetChamp(connection)
-
+        while True:
+            con = await connection.request('get', '/lol-champ-select/v1/current-champion')
+            jsonId = await con.json()
+            if con.status != 404 and jsonId != 0:
+                champion = championList[jsonId]
+                break
+            else:
+                sleep(4)
 
     fetchRunesList()
 
@@ -250,6 +248,7 @@ try:
             print(" ")
 
             print("Applying runes...")
+
             request2 = await connection.request('get', '/lol-perks/v1/pages')
             pages = await request2.json()
             page0 = pages[0]
@@ -262,6 +261,7 @@ try:
                                                                runesList[runes[9]], runesList[runes[10]],
                                                                runesList[runes[11]]],
                                            "subStyleId": runesList[runes[6]]})
+            print(" ")
             print("Done !")
             print(" ")
             if config["checkfornewver"]:
@@ -269,11 +269,11 @@ try:
                     checkVersion()
                 except:
                     print("Unable to check version.")
-            time.sleep(5)
+            sleep(5)
             if config["autoclose"]:
                 break
 
     connector.start()
 except Exception as e:
     print("Error: ", e)
-    time.sleep(6)
+    sleep(6)

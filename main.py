@@ -249,10 +249,10 @@ try:
 
             print("Applying runes...")
 
-            request2 = await connection.request('get', '/lol-perks/v1/pages')
+            request2 = await connection.request('get', '/lol-perks/v1/pages').json()
             pages = await request2.json()
-            page0 = pages[0]
-            await connection.request('put', '/lol-perks/v1/pages/' + str(page0["id"]),
+            page = pages[0]
+            await connection.request('put', '/lol-perks/v1/pages/' + str(page["id"]),
                                      data={"name": f"QuickRunes {champion}", "current": True,
                                            "primaryStyleId": runesList[runes[1]],
                                            "selectedPerkIds": [runesList[runes[2]], runesList[runes[3]],
@@ -272,8 +272,10 @@ try:
             sleep(5)
             if config["autoclose"]:
                 break
+        await connector.stop()
 
     connector.start()
+
 except Exception as e:
     print("Error: ", e)
     sleep(6)

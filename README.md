@@ -23,9 +23,5 @@ python main.py
 1. Run LeagueOfLegends.
 2. Run the script.
 
-## ToDo
-- [x] Another rune provider
-- [ ] GUI
-
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

@@ -178,35 +178,6 @@ try:
                     runes[i] = perk.find("img")["alt"].replace("The ", "").replace(" Shard", "")
                     i += 1
 
-            elif config["provider"] == "op.gg":
-                request = get(url=f"https://na.op.gg/champion/{champion}", headers=headers)
-                soup = BeautifulSoup(request.content, 'html.parser')
-                keystones = soup.find_all(class_="perk-page__item perk-page__item--mark")
-                runes[1] = getKey(
-                    int(str(keystones[0])[int(str(keystones[0]).find(".png?")) - 4:int(str(keystones[0]).find(".png?"))]))
-                runes[6] = getKey(
-                    int(str(keystones[1])[int(str(keystones[1]).find(".png?")) - 4:int(str(keystones[1]).find(".png?"))]))
-
-                keystonePerk = \
-                    soup.find(class_="perk-page__item perk-page__item--keystone perk-page__item--active").find("img")["src"]
-                runes[2] = getKey(
-                    int(str(keystonePerk)[int(str(keystonePerk).find(".png?")) - 4:int(str(keystonePerk).find(".png?"))]))
-                i = 3
-                perkPage = soup.find_all(class_="perk-page__row")
-                for j in range(1, 9):
-                    if perkPage[j].find(class_="perk-page__item perk-page__item--active") is not None:
-                        perk = perkPage[j].find(class_="perk-page__item perk-page__item--active").find("img")["src"]
-                        runes[i] = getKey(int(str(perk)[int(str(perk).find(".png?")) - 4:int(str(perk).find(".png?"))]))
-                        i += 1
-                        if i == 6:
-                            i = 7
-                fragments = soup.find(class_="fragment-page").findAll(class_="active tip")
-                i = 9
-                for f in fragments:
-                    sizeOfId = f["src"].find(".png")
-                    id = str(f["src"])[sizeOfId - 4:sizeOfId]
-                    runes[i] = getKey(int(id))
-                    i += 1
         except:
             print("Can't get runes for your champion!")
             print("")

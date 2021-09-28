@@ -4,6 +4,8 @@ Rune Maker for LeagueOfLegends
 
 ![Preview](https://github.com/ppizzopet/quickrunes/blob/main/images/preview.png?raw=true)
 
+## All runes are from https://u.gg/
+
 ## How to run
 
 Install requirements
